@@ -37,14 +37,18 @@ N.B [version], you need:
 N.B:
 - the app can sometimes cause problems when first opening the chat for a new user, also putting their messages on the left together with those received, this is caused by latency (failure to call the flow to the parameters collection.
 -The app is not guaranteed to run on desktop and iOS, only tested on web and Android
+-the splash and icons have bugs and malformations on Android versions higher than 11
+-Toast doesn't work on the web and the background remains that of spam
 
 ## preview splash
 
-![splash](https://github.com/user-attachments/assets/51f5a476-2be0-4355-b962-5878321b40cc)
+![splash](https://github.com/user-attachments/assets/9d2c5f15-71dd-44b9-b3c9-d40950098567)
 
-## dispaly
 
-![home_auth](https://github.com/user-attachments/assets/ca3d45b2-5bcc-44a3-bafe-c9243286a413)
+## display
+
+![home_auth](https://github.com/user-attachments/assets/fe3b5d76-24aa-42ef-8313-de0354c19eea)
+
 
 
 
