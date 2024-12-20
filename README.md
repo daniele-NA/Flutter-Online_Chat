@@ -9,6 +9,9 @@ Implementing a cross-platform chat with Flutter and Firebase, when opening the p
 
 -configure your own Firebase account for creating a console and subsequently connecting to the project
 
+![Schema database](https://github.com/user-attachments/assets/660aefc6-7152-4876-9b8b-279e689a5e3e)
+
+
 - the configuration requires NPM [Node.js] commands, so proceed with installing Node on your PC
 
 -download, modify [if necessary] the 3 console files that are not present in my project, which:
