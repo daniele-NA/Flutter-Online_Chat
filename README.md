@@ -1,11 +1,11 @@
 # description
 Implementing a cross-platform chat with Flutter and Firebase, when opening the project, is essential, [if not done previously]:
 
-# fluuter
+# flutter
 
 -install the entire flutter environment on your PC with plugins and dart compiler
 
-## Getting Started witch FIREBASE
+## Getting Started with FIREBASE
 
 -configure your own Firebase account for creating a console and subsequently connecting to the project
 
