@@ -7,6 +7,7 @@ abstract class DatabaseConnection {
    * astrazione dei metodi ereditati d QueryPanel()
    */
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  UserCredential? userCredential;
 
   User? get currentUser =>
       this._firebaseAuth.currentUser; //prende l'utente corrente
@@ -27,6 +28,9 @@ abstract class DatabaseConnection {
 
   @protected
   FirebaseAuth get firebaseAuth => _firebaseAuth;
+
+  @protected
+  Future<void> signInWithGitHub(BuildContext context);
 }
 
 /**
@@ -41,7 +45,8 @@ final class ArgMessages {
   static final String timestamp = 'timestamp';
   static final String value = 'value';
 
-  static final String collectionNameForMessages = 'messages';   //nome della collezione
+  static final String collectionNameForMessages =
+      'messages'; //nome della collezione
 }
 
 /**
@@ -54,5 +59,16 @@ final class ArgParameters {
   static final String email = 'email';
   static final String username = 'username';
 
-  static final String collectionNameForParameters = 'parameters';  //nome della collezione
+  static final String collectionNameForParameters =
+      'parameters'; //nome della collezione
+}
+
+/**
+ * parametri statici per le caratteristiche
+ */
+
+final class ArgFeatures {
+  static final groupDescription = 'group_description';
+
+  static final String collectionNameForFeatures = 'features';
 }
