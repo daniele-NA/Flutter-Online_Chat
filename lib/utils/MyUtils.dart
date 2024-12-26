@@ -5,6 +5,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 class MyDialog {
   MyDialog() {}
 
+  /**
+   * widget per una sorta di JoptionPane
+   */
   Future<String> showInputDialog(
       {required BuildContext context,
       required String text,
@@ -98,6 +101,10 @@ class MyDialog {
 }
 
 class MyToast {
+
+  /**
+   * widget per toast
+   */
   static void show({required String text}) {
     Fluttertoast.showToast(
       msg: text.toString(),
@@ -110,6 +117,10 @@ class MyToast {
 }
 
 class MyNotification {
+
+  /**
+   * widget per creazione notifica e successivo .show()
+   */
   static Future<void> showNotification(String title, String body,
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =

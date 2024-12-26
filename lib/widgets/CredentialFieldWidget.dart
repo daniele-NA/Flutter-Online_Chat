@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+
+/**
+ * semplice implementazione del widget per inserimento
+ * delle credenziali nell'attuale AuthPage
+ */
 class CredentialFieldWidget extends StatelessWidget {
 
   late final TextEditingController controller;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluuter/connections/firestore.dart';
 import 'package:fluuter/features/RuntimeFeatures.dart';
 import 'package:fluuter/screens/GroupInfoPage.dart';
@@ -55,6 +56,9 @@ class _HomepageState extends State<Homepage> {
     super.dispose();
   }
 
+  /**
+   * permette lo switch con la bottom bar
+   */
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -72,7 +76,9 @@ class _HomepageState extends State<Homepage> {
           Container(
             padding: const EdgeInsets.only(top: 10),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                MyToast.show(text: 'Coming soon, stay with us!');
+              },
               icon: const Icon(
                 Icons.call,
                 color: Colors.deepOrange,
@@ -169,32 +175,40 @@ class _HomepageState extends State<Homepage> {
                         controller: _controllerInputMessage,
                         decoration: InputDecoration(
                           hintStyle: const TextStyle(
-                              fontSize: 28,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.white),
+                            fontSize: 28,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white,
+                          ),
                           hintText: "Scrivi un messaggio...",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                                color: Colors.deepOrange, width: 3),
+                            borderSide: const BorderSide(color: Colors.deepOrange, width: 3),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                                color: Colors.deepOrange, width: 3),
+                            borderSide: const BorderSide(color: Colors.deepOrange, width: 3),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(
-                                color: Colors.deepOrange, width: 3),
+                            borderSide: const BorderSide(color: Colors.deepOrange, width: 3),
                           ),
                         ),
                         style: const TextStyle(
-                            fontSize: 28,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.white),
+                          fontSize: 28,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.white,
+                        ),
+                        minLines: 1,  // La quantità minima di righe visibili
+                        maxLines: 4,  // Limita la quantità massima di righe
+                        onChanged: (text) {
+                          // Aggiungi automaticamente \n ogni 30 caratteri
+                          if(_controllerInputMessage.text.length%30==0){
+                            _controllerInputMessage.text= _controllerInputMessage.text+"\n";
+                          }
+                        },
                       ),
-                    ),
+                    )
+,
                     IconButton(
                       iconSize: 38,
                       icon: const Icon(
@@ -203,13 +217,12 @@ class _HomepageState extends State<Homepage> {
                       ),
                       onPressed: () {
                         if (_controllerInputMessage.text.isNotEmpty) {
-                         try{
-                           FirestoreService()
-                               .insertMessage(_controllerInputMessage.text);
-                         }catch(e){
-                           MyToast.show(text: e.toString());
-                         }
-
+                          try {
+                            FirestoreService()
+                                .insertMessage(_controllerInputMessage.text);
+                          } catch (e) {
+                            MyToast.show(text: e.toString());
+                          }
 
                           _controllerInputMessage.clear();
                         } else {
@@ -226,6 +239,9 @@ class _HomepageState extends State<Homepage> {
           GroupInfoPage(),
         ],
       ),
+      /**
+       * gestione della bottom bar tra le 2 pagine
+       */
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
@@ -246,7 +262,11 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  /**
+   * logout
+   */
   Future<void> _interfaceWithQueryPanel() async {
     await FirebaseService().signOut();
   }
+
 }

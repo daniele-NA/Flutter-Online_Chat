@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ButtoninfoWidget extends StatelessWidget {
+
+/**
+ * bottoni presenti nella schermata delle info del gruppo
+ */
+class ButtonInfoWidget extends StatelessWidget {
   final String _text;
   final VoidCallback onPressedCallback;  // Funzione passata come parametro
 
   // Costruttore
-  ButtoninfoWidget({super.key, required String text, required this.onPressedCallback})
+  ButtonInfoWidget({super.key, required String text, required this.onPressedCallback})
       : _text = text.trim() {
     if (_text.isEmpty) {
       throw Exception("Invalid text");

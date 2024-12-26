@@ -29,8 +29,6 @@ abstract class DatabaseConnection {
   @protected
   FirebaseAuth get firebaseAuth => _firebaseAuth;
 
-  @protected
-  Future<void> signInWithGitHub(BuildContext context);
 }
 
 /**
@@ -71,4 +69,13 @@ final class ArgFeatures {
   static final groupDescription = 'group_description';
 
   static final String collectionNameForFeatures = 'features';
+}
+
+/**
+ * parametri statici per le stelline inviate come rating dell'app
+ */
+final class ArgRating {
+  static final rating = 'rating';
+
+  static final String collectionNameForRatings = 'ratings';
 }

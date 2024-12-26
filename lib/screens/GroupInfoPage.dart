@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluuter/features/RuntimeFeatures.dart';
 import 'package:fluuter/utils/MyUtils.dart';
 import '../connections/firestore.dart';
 import 'package:fluuter/widgets/ButtonInfoWidget.dart';
@@ -89,18 +88,42 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
             },
           ),
 
-          // Utilizza un FutureBuilder per la descrizione
+          /**
+           * grazie al database firestore,si tiene aggiornato costantemente con un flusso
+           */
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            child: Text(
-              RuntimeFeatures.groupDescription ?? 'Descrizione non disponibile',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
-              ),
+            child: StreamBuilder<String>(
+              stream: FirestoreService().getGroupDescription(),
+              // Ascolta il flusso restituito dalla funzione
+              builder: (context, snapshot) {
+                // Se il flusso è in attesa, mostra "Caricamento..."
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text(
+                    'Caricamento...',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }
+
+                // In tutti gli altri casi (errore o dati), mostra la descrizione
+                return Text(
+                  snapshot.hasData
+                      ? snapshot.data!
+                      : 'Descrizione non disponibile',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
             ),
           ),
 
@@ -108,7 +131,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-            child: ButtoninfoWidget(
+            child: ButtonInfoWidget(
               text: 'Cambia descrizione',
               onPressedCallback: () async {
                 try {
@@ -118,7 +141,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                     barrierDismissible: true,
                   );
                   if (newDescription.isNotEmpty) {
-                    FirestoreService().newGroupDescription(txt: newDescription);
+                    FirestoreService().setGroupDescription(txt: newDescription);
                   }
                 } catch (e) {
                   MyToast.show(text: e.toString());
@@ -130,7 +153,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           // Bottone per svuotare la chat
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ButtoninfoWidget(
+            child: ButtonInfoWidget(
               text: 'Svuota la chat per tutti',
               onPressedCallback: () async {
                 try {

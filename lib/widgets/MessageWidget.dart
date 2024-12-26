@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+
+/**
+ * gestione del widget che regola colore ed allineamento
+ * in base ai parametri in input
+ */
 class MessageWidget extends StatelessWidget {
   late final String _header; // mittente
   late final String _payload; // testo messaggio

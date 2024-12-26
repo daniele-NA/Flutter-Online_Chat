@@ -22,7 +22,7 @@ final class FirestoreService {
       value
        */
 
-    if(RuntimeFeatures.username==null || value.trim().isEmpty){
+    if (RuntimeFeatures.username == null || value.trim().isEmpty) {
       throw Exception('Username/Messaggio non valido');
     }
     await messages.add({
@@ -60,12 +60,14 @@ final class FirestoreService {
   Stream<Map<String, String>> getLastMessageForNotification() {
     return _db
         .collection(ArgMessages.collectionNameForMessages)
-        .orderBy(ArgMessages.timestamp, descending: true) // Ordina per timestamp, più recente prima
+        .orderBy(ArgMessages.timestamp,
+            descending: true) // Ordina per timestamp, più recente prima
         .limit(1) // Limita il risultato a solo 1 messaggio
         .snapshots() // Ottieni gli aggiornamenti in tempo reale
         .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
-        var doc = snapshot.docs.first; // Prendi il primo documento (l'ultimo inserito)
+        var doc = snapshot
+            .docs.first; // Prendi il primo documento (l'ultimo inserito)
         return {
           ArgMessages.sender: doc[ArgMessages.sender] as String,
           ArgMessages.value: doc[ArgMessages.value] as String,
@@ -75,13 +77,14 @@ final class FirestoreService {
     });
   }
 
-
   /**
-   * funzione ceh viene richiamata ogni qual volta si va ad effettuare una registrazione
+   * funzione che viene richiamata ogni qual volta si va ad effettuare una registrazione
    */
   Future<void> insertParameter(String username) async {
     //inserisce l'username all'interno della collection parameters
     //da effettuare SOLO alla registrazione
+
+
 
     CollectionReference parameters =
         _db.collection(ArgParameters.collectionNameForParameters);
@@ -119,7 +122,7 @@ final class FirestoreService {
             querySnapshot.docs.first[ArgParameters.username] as String
         : usernameExtracted = null;
 
-    RuntimeFeatures.username=usernameExtracted;
+    RuntimeFeatures.username = usernameExtracted;
 
     print('Ecco l\'username ${RuntimeFeatures.username}');
 
@@ -131,14 +134,16 @@ final class FirestoreService {
             querySnapshot.docs.first[ArgFeatures.groupDescription] as String
         : groupDescriptionExtracted = null;
 
-    RuntimeFeatures.groupDescription=groupDescriptionExtracted;
+    RuntimeFeatures.groupDescription = groupDescriptionExtracted;
   }
 
   /**
    * si occupa di controllare se l'username è già in uso
    */
   Future<void> duplicateDataCheck(String usernameToCheck) async {
-    try {
+    if(usernameToCheck.trim().isEmpty || usernameToCheck.trim().length>15){
+      throw Exception('Username non valido');
+    }
       var querySnapshot = await _db
           .collection(ArgParameters.collectionNameForParameters)
           .where(ArgParameters.username, isEqualTo: usernameToCheck.trim())
@@ -148,9 +153,7 @@ final class FirestoreService {
       if (querySnapshot.docs.isNotEmpty) {
         throw Exception('L\'username ${usernameToCheck} è già in uso.');
       }
-    } catch (e) {
-      rethrow; // Rilancia l'eccezione se vuoi gestirla altrove
-    }
+
   }
 
   /**
@@ -175,9 +178,8 @@ final class FirestoreService {
    * funzione che aggiorna la descrizione
    */
 
-  Future<void> newGroupDescription({required String txt}) async {
-
-    if(txt.length>170){
+  Future<void> setGroupDescription({required String txt}) async {
+    if (txt.length > 170) {
       throw Exception('Testo troppo lungo');
     }
     // Recupera il documento (presumiamo che ci sia un solo documento)
@@ -200,8 +202,30 @@ final class FirestoreService {
     throw Exception("Qualcosa è andato storto");
   }
 
+
   /**
-   * pulizia dei messaggi
+   * flusso che ritorna ad ogni notify,la nuova descrizione del gruppo,
+   * setta ovviamente i parametri nelle RuntimeFeatures
+   */
+  Stream<String> getGroupDescription() {
+    // Restituisco un flusso che emette i dati ogni volta che c'è un aggiornamento nella collezione
+    return _db.collection(ArgFeatures.collectionNameForFeatures)
+        .snapshots()
+        .map((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        // Estrae la descrizione del gruppo dal primo documento
+        String groupDescription = querySnapshot.docs.first[ArgFeatures.groupDescription] as String;
+        RuntimeFeatures.groupDescription = groupDescription; // Aggiorna il valore globale
+        return groupDescription;
+      } else {
+        return '';
+      }
+    });
+  }
+
+
+  /**
+   * pulizia di tutti i messaggi
    */
   Future<void> clearMessages({required String password}) async {
     if (password != _ADM_PASSWORD) {
@@ -215,5 +239,22 @@ final class FirestoreService {
     for (var doc in querySnapshot.docs) {
       await doc.reference.delete();
     }
+  }
+
+  /**
+   * inserisce senza alcuna logica particolare,
+   * delle stelline come voto
+   */
+  Future<void> insertRating({required double value}) async {
+    if (value < 0 || value > 5) {
+      throw Exception("Votazione non valida");
+    }
+
+    CollectionReference parameters =
+        _db.collection(ArgRating.collectionNameForRatings);
+
+    await parameters.add({
+      ArgRating.rating: value,
+    });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_background/flutter_background.dart'; // Importa il pacchetto per il background
@@ -21,6 +22,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+debugPaintSizeEnabled=false;  //disabilita i controlli del layout
 
   // Inizializza il supporto per l'esecuzione in background prima di attivare l'esecuzione
   await FlutterBackground.initialize();
@@ -39,15 +41,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+
+  /**
+   * questo parametro statico è colui che tiene traccia dei plugin e delle funzioni
+   * per il .show()  della notifica,viene chiamato staticamente
+   * da qualunque classe ne abbia bisogno
+   */
   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   bool _isAppInBackground = false; // Variabile per tenere traccia dello stato dell'app
 
+
+  /**
+   * gestione inizializzazione notifiche ,
+   * colore barra strumenti
+   */
   @override
   void initState() {
     super.initState();
     _initializeNotifications();
-    // Impostare il colore della barra di navigazione e icone su nero e bianco
+
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.black,
       systemNavigationBarIconBrightness: Brightness.light,
@@ -62,7 +75,9 @@ class MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     _startListeningToLastMessage();
   }
 
-  // Funzione per inizializzare le notifiche
+  /**
+   * inizializzazione delle notifiche che viene fatta solo una volta qui nel main
+   */
   void _initializeNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('notification_icon_resized');
 
@@ -88,7 +103,11 @@ class MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-  // Ascolta l'ultimo messaggio dal Firestore
+  /**
+   * ascolta l'ultimo messaggio da firestore in modo da inviarlo
+   * come notifica,escludendo però i messaggi che manda
+   * l'utente stesso
+   */
   void _startListeningToLastMessage() {
     FirestoreService().getLastMessageForNotification().listen((message) {
       if (message.isNotEmpty) {
@@ -106,7 +125,10 @@ class MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    // Rimuovi l'observer quando il widget viene distrutto
+    /**
+     * gestione dell'observer che serve per capire quando l'app
+     * è in background
+     */
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
