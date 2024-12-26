@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class MyDialog {
+  MyDialog() {}
 
-  MyDialog(){}
-
-
-  Future<String> showInputDialog({required BuildContext context,required String text,required bool barrierDismissible}) async {
+  Future<String> showInputDialog(
+      {required BuildContext context,
+      required String text,
+      required bool barrierDismissible}) async {
     //per inserimento username
     TextEditingController _dialogController = TextEditingController();
     String input = ''; // Variabile per memorizzare l'input
@@ -14,7 +16,8 @@ class MyDialog {
     // Mostra il dialogo
     await showDialog<String>(
       context: context,
-      barrierDismissible: barrierDismissible, //non si può rimuovere dallo schermo
+      barrierDismissible: barrierDismissible,
+      //non si può rimuovere dallo schermo
       // Impedisce la chiusura del dialogo cliccando fuori
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -94,16 +97,39 @@ class MyDialog {
   }
 }
 
-class MyToast{
-
-
-  static void show({required String text}){
+class MyToast {
+  static void show({required String text}) {
     Fluttertoast.showToast(
       msg: text.toString(),
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.CENTER,
       backgroundColor: Colors.deepOrange,
       fontSize: 20,
+    );
+  }
+}
+
+class MyNotification {
+  static Future<void> showNotification(String title, String body,
+      FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      '0',
+      'Easy_Code',
+      channelDescription: 'Canale per le notifiche messaggi',
+      importance: Importance.high,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      title,
+      body,
+      platformChannelSpecifics,
+      payload: 'Notifica ricevuta!',
     );
   }
 }

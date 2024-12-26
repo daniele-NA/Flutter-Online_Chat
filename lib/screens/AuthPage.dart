@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluuter/connections/firebase.dart';
+import 'package:fluuter/main.dart';
 import 'package:fluuter/utils/MyUtils.dart';
 import '../widgets/CredentialFieldWidget.dart';
 
@@ -11,13 +11,12 @@ class AuthPage extends StatefulWidget {
   _AuthPageState createState() => _AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin {
+class _AuthPageState extends State<AuthPage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
 
   bool _isLogin = true;
-
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -25,26 +24,18 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
     _setupAnimation();
-  }
-
-  void _initializeNotifications() {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('notification_icon_resized');
-
-    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void _setupAnimation() {
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800), // Shortened to make animation faster
+      duration: const Duration(milliseconds: 800),
+      // Shortened to make animation faster
       vsync: this,
     )..repeat(reverse: true); // Makes the animation repeat in reverse.
 
-    _animation = Tween<double>(begin: 0.0, end: 10.0).animate( // Reduced range for faster movement
+    _animation = Tween<double>(begin: 0.0, end: 10.0).animate(
+      // Reduced range for faster movement
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
@@ -66,9 +57,11 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 50),
-            _buildCredentialField(_controllerEmail, 'myemail@gmail.com', Icons.account_circle_rounded),
+            _buildCredentialField(_controllerEmail, 'myemail@gmail.com',
+                Icons.account_circle_rounded),
             const SizedBox(height: 20),
-            _buildCredentialField(_controllerPassword, 'mysecretpassword', Icons.lock),
+            _buildCredentialField(
+                _controllerPassword, 'mysecretpassword', Icons.lock),
             const SizedBox(height: 40),
             _buildAuthButton(),
             _buildToggleAuthButton(),
@@ -86,13 +79,15 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
       toolbarHeight: 80,
       title: const Text(
         'Benvenuto in Easy_Code',
-        style: TextStyle(fontSize: 25, letterSpacing: 1.3, color: Colors.deepOrange),
+        style: TextStyle(
+            fontSize: 25, letterSpacing: 1.3, color: Colors.deepOrange),
       ),
       backgroundColor: Colors.black,
     );
   }
 
-  CredentialFieldWidget _buildCredentialField(TextEditingController controller, String hintText, IconData icon) {
+  CredentialFieldWidget _buildCredentialField(
+      TextEditingController controller, String hintText, IconData icon) {
     return CredentialFieldWidget(
       controller: controller,
       hintText: hintText,
@@ -132,7 +127,9 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
         foregroundColor: WidgetStateProperty.all<Color>(Colors.deepOrange),
       ),
       child: Text(
-        _isLogin ? "Non hai un account? Registrati" : "Hai già un account? Accedi",
+        _isLogin
+            ? "Non hai un account? Registrati"
+            : "Hai già un account? Accedi",
       ),
     );
   }
@@ -155,7 +152,8 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
       animation: _animation,
       builder: (context, child) {
         return Transform.translate(
-          offset: Offset(0, _animation.value), // Animazione di movimento su e giù
+          offset: Offset(0, _animation.value),
+          // Animazione di movimento su e giù
           child: IconButton(
             icon: Image.asset(assetPath),
             iconSize: 20,
@@ -197,33 +195,11 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
         _controllerEmail.clear();
         _controllerPassword.clear();
         MyToast.show(text: 'Attendi qualche secondo');
-        _showNotification("Registrazione effettuata correttamente", "Benvenuto $username!!");
+        MyNotification.showNotification(
+            "Registrazione effettuata correttamente",
+            "Benvenuto $username!!",
+            MyHomePageState.flutterLocalNotificationsPlugin);
       }
-    } catch (e) {
-      MyToast.show(text: e.toString());
-    }
-  }
-
-  Future<void> _showNotification(String title, String body) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      '0',
-      'Easy_Code',
-      channelDescription: 'Canale per le notifiche login',
-      importance: Importance.high,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    try {
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        title,
-        body,
-        platformChannelSpecifics,
-        payload: 'Notifica ricevuta!',
-      );
     } catch (e) {
       MyToast.show(text: e.toString());
     }

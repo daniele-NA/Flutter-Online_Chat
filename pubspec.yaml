@@ -22,6 +22,7 @@ dependencies:
   firebase_auth: ^5.3.4
   cloud_firestore: ^5.5.1
   fluttertoast: ^8.2.10
+  flutter_background: ^1.3.0+1
 
  # url_launcher: ^6.0.10 # Aggiungi questa riga
 

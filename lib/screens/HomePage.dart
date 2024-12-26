@@ -203,8 +203,14 @@ class _HomepageState extends State<Homepage> {
                       ),
                       onPressed: () {
                         if (_controllerInputMessage.text.isNotEmpty) {
-                          FirestoreService()
-                              .insertMessage(_controllerInputMessage.text);
+                         try{
+                           FirestoreService()
+                               .insertMessage(_controllerInputMessage.text);
+                         }catch(e){
+                           MyToast.show(text: e.toString());
+                         }
+
+
                           _controllerInputMessage.clear();
                         } else {
                           MyToast.show(text: 'Messaggio vuoto');

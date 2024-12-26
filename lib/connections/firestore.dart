@@ -22,7 +22,9 @@ final class FirestoreService {
       value
        */
 
-    print('Ecco USERNAME : ${RuntimeFeatures.username}');
+    if(RuntimeFeatures.username==null || value.trim().isEmpty){
+      throw Exception('Username/Messaggio non valido');
+    }
     await messages.add({
       ArgMessages.sender: RuntimeFeatures.username,
       //si carica l'username corrente
@@ -51,6 +53,28 @@ final class FirestoreService {
       }).toList();
     });
   }
+
+  /**
+   * permette di ricevere sempre l'ultimo messaggio
+   */
+  Stream<Map<String, String>> getLastMessageForNotification() {
+    return _db
+        .collection(ArgMessages.collectionNameForMessages)
+        .orderBy(ArgMessages.timestamp, descending: true) // Ordina per timestamp, più recente prima
+        .limit(1) // Limita il risultato a solo 1 messaggio
+        .snapshots() // Ottieni gli aggiornamenti in tempo reale
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        var doc = snapshot.docs.first; // Prendi il primo documento (l'ultimo inserito)
+        return {
+          ArgMessages.sender: doc[ArgMessages.sender] as String,
+          ArgMessages.value: doc[ArgMessages.value] as String,
+        };
+      }
+      return {}; // In caso non ci siano messaggi, ritorna un oggetto vuoto
+    });
+  }
+
 
   /**
    * funzione ceh viene richiamata ogni qual volta si va ad effettuare una registrazione
@@ -152,6 +176,10 @@ final class FirestoreService {
    */
 
   Future<void> newGroupDescription({required String txt}) async {
+
+    if(txt.length>170){
+      throw Exception('Testo troppo lungo');
+    }
     // Recupera il documento (presumiamo che ci sia un solo documento)
     var querySnapshot =
         await _db.collection(ArgFeatures.collectionNameForFeatures).get();

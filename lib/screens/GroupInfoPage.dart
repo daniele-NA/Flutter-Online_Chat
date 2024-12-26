@@ -44,7 +44,9 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               textAlign: TextAlign.center,
               'Easy Code Group',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 28,
+                fontStyle: FontStyle.italic,
+                fontFamily: 'YsabeauSC',
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -112,14 +114,14 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                 try {
                   String? newDescription = await MyDialog().showInputDialog(
                     context: context,
-                    text: 'Inserisci nuova descrizione',
+                    text: 'max 170 CH',
                     barrierDismissible: true,
                   );
                   if (newDescription.isNotEmpty) {
                     FirestoreService().newGroupDescription(txt: newDescription);
                   }
                 } catch (e) {
-                  MyToast.show(text: 'Qualcosa è andato storto');
+                  MyToast.show(text: e.toString());
                 }
               },
             ),
