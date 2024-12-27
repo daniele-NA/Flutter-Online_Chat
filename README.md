@@ -20,7 +20,7 @@ Implementing a cross-platform chat with Flutter and Firebase, when opening the p
    2) firebase.json (in the project)
    3) google-services.json (android/app/src)
    
-   !) create 2 collections, 'messages' and 'parameters', the names can be changed in the ArgMessages and ArgParameter classes in the abstract connections class
+   !) create 4 collections, 'messages'-'parameters'-'features'-'ratings', the names can be changed in the Args classes in the abstract connections class
 
 # project
 -for safety and to accept splash and icon operation, first type:
